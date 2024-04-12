@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """
-Filters sensitive data in a message.
+This module provides a class and a function for filtering sensitive data in
+log messages.
 """
 
 import re
@@ -17,10 +18,14 @@ class RedactingFormatter(logging.Formatter):
     SEPARATOR = ";"
 
     def __init__(self, fields: List[str]):
+        """ Constructor method
+        """
         super(RedactingFormatter, self).__init__(self.FORMAT)
         self.fields = fields
 
     def format(self, record: logging.LogRecord) -> str:
+        """ Formats the log message
+        """
         message = super().format(record)
         return filter_datum(self.fields, self.REDACTION, message,
                             self.SEPARATOR)
@@ -30,6 +35,15 @@ def filter_datum(fields: List[str], redaction: str,
                  message: str, separator: str) -> str:
     """
     Returns the log message obfuscated.
+
+    Args:
+        fields (List[str]): A list of field names to be redacted.
+        redaction (str): The string to replace the sensitive data with.
+        message (str): The log message to be filtered.
+        separator (str): The separator used to separate field-value pairs.
+
+    Returns:
+        str: The filtered log message with sensitive data redacted.
     """
     for field in fields:
         message = re.sub(field + "=.*?" + separator,
