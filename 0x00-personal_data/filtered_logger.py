@@ -70,16 +70,16 @@ def filter_datum(fields: List[str], redaction: str,
 def get_db() -> mysql.connector.connection.MySQLConnection:
     """ Returns a MySQL connector object
     """
-    host = os.environ.get('PERSONAL_DATA_DB_HOST') or 'localhost'
-    database = os.environ.get('PERSONAL_DATA_DB_NAME') or 'root'
-    username = os.environ.get('PERSONAL_DATA_DB_USERNAME')
-    password = os.environ.get('PERSONAL_DATA_DB_PASSWORD') or ''
+    username = os.getenv('PERSONAL_DATA_DB_USERNAME') or 'root'
+    password = os.getenv('PERSONAL_DATA_DB_PASSWORD') or ''
+    host = os.getenv('PERSONAL_DATA_DB_HOST') or 'localhost'
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
 
     db_connections = mysql.connector.connect(
         user=username,
         password=password,
         host=host,
-        database=database
+        database=db_name
     )
 
     return db_connections
