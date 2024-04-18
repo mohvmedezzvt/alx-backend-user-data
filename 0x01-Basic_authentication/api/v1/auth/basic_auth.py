@@ -3,7 +3,10 @@
 """
 
 import base64
+import email
 from .auth import Auth
+from models.base import Base
+from models.user import User
 from typing import TypeVar
 
 
@@ -62,15 +65,23 @@ class BasicAuth(Auth):
                                      user_pwd:
                                      str) -> TypeVar('User'):
         """User object from credentials method"""
+        user = None
         if user_email is None or not isinstance(user_email, str):
             return None
 
         if user_pwd is None or not isinstance(user_pwd, str):
             return None
 
-        from models.user import User
-        user = User()
-        user.email = user_email
-        user.password = user_pwd
+        try:
+            users = User.search({'email': user_email})
+            user = users[0] if user else None
+            if user:
+                password = user.password
+                if password:
+                    if user.is_valid_password(password):
+                        return user
+                else:
+                    return None
 
-        return user
+        except Exception as e:
+            raise e
