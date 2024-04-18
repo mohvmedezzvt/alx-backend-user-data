@@ -20,6 +20,13 @@ if AUTH_TYPE == 'auth':
 
 @app.before_request
 def before_request():
+    """
+    Function that is executed before each request to the API.
+    It performs authentication and authorization checks.
+
+    Returns:
+        None
+    """
     if auth is None:
         pass
     req_paths = auth.require_auth(request.path,
