@@ -11,10 +11,10 @@ class Auth:
         """Require auth method"""
         if path is None:
             return True
-        
+
         if excluded_paths is None or not excluded_paths:
             return True
-        
+
         if not path.endswith('/'):
             path += '/'
 
