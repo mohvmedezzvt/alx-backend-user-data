@@ -42,3 +42,22 @@ def session_authentication() -> str:
     response.set_cookie(getenv('SESSION_NAME'), session_id)
 
     return response
+
+
+@app_views.route('/auth_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def session_logout() -> str:
+    """ DELETE /auth_session/logout
+    JSON body:
+      - session_id
+    Return:
+      - 200 on success
+      - 403 if session_id is missing
+      - 403 if session_id is not linked to any User object
+    """
+    from api.v1.app import auth
+
+    if auth.destroy_session(request):
+        return jsonify({}), 200
+
+    abort(404)
