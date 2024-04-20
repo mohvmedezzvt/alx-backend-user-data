@@ -3,10 +3,15 @@
 """
 
 from api.v1.auth.session_auth import SessionAuth
+from os import getenv
+from typing import TypeVar
+from datetime import datetime, timedelta
 
 
 class SessionExpAuth(SessionAuth):
     """SessionExpAuth class"""
+    def __init__(self) -> None:
+        self.session_duration = int(getenv('SESSION_DURATION', 0))
 
     def create_session(self, user_id: str = None) -> str:
         """Create session method"""
@@ -14,10 +19,11 @@ class SessionExpAuth(SessionAuth):
         if session_id is None:
             return None
 
-        self.user_id_by_session_id[session_id] = {
+        session_dict = {
             'user_id': user_id,
-            'created_at': self.now()
+            'created_at': datetime.now()
         }
+        self.user_id_by_session_id[session_id] = session_dict
 
         return session_id
 
@@ -26,10 +32,7 @@ class SessionExpAuth(SessionAuth):
         if session_id is None:
             return None
 
-        if not isinstance(session_id, str):
-            return None
-
-        session_dict = super().user_id_by_session_id.get(session_id)
+        session_dict = self.user_id_by_session_id.get(session_id)
         if session_dict is None:
             return None
 
@@ -39,8 +42,12 @@ class SessionExpAuth(SessionAuth):
         if 'created_at' not in session_dict:
             return None
 
-        if (self.now() - session_dict.get(
-                'created_at')) > self.session_duration:
+        created_at = session_dict.get('created_at')
+        if created_at is None:
+            return None
+
+        if (created_at + timedelta(seconds=self.session_duration)) \
+                < datetime.now():
             return None
 
         return session_dict.get('user_id')
