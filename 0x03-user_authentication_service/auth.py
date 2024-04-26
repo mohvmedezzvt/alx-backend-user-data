@@ -57,14 +57,6 @@ class Auth:
         except ValueError:
             return False
 
-    def _generate_uuid() -> str:
-        """Generate a UUID
-
-        Returns:
-            str: The UUID
-        """
-        return str(uuid.uuid4())
-
 
 def _hash_password(password: str) -> bytes:
     """Hash a password
@@ -78,3 +70,12 @@ def _hash_password(password: str) -> bytes:
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password
+
+
+def _generate_uuid() -> str:
+    """Generate a UUID
+
+    Returns:
+        str: The UUID
+    """
+    return str(uuid.uuid4())
