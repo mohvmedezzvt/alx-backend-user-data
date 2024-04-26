@@ -92,6 +92,14 @@ class Auth:
         except NoResultFound:
             return None
 
+    def destroy_session(self, user_id: int) -> None:
+        """Destroy a session
+
+        Args:
+            user_id (int): The ID of the user
+        """
+        self._db.update_user(user_id, session_id=None)
+
 
 def _hash_password(password: str) -> bytes:
     """Hash a password
